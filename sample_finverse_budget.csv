@@ -1,0 +1,150 @@
+ID,Year,Month,Type,Category,Amount,Notes
+1,2026,January,Income,After Tax Salary - Self,95000,Regular monthly salary
+2,2026,January,Income,Rental income,18000,2BHK apartment rent
+3,2026,January,Income,Interest/Dividend income,3500,Quarterly interest credited
+4,2026,January,Expense,Rent payments,25000,House rent
+5,2026,January,Expense,Grocery,12500,Supermarket & pantry supplies
+6,2026,January,Expense,Electricity bills,2800,Winter electricity bill
+7,2026,January,Expense,Internet,1200,Fiber broadband 200Mbps
+8,2026,January,Expense,Mobile,999,Postpaid family plan
+9,2026,January,Expense,Petrol/Diesel,5500,Vehicle fuel
+10,2026,January,Expense,Medicines,2100,Monthly vitamins & prescription
+11,2026,January,Expense,Hotel/Restaurants,4200,Weekend family dining
+12,2026,January,Expense,Health Insurance Premium,14000,Annual health insurance renewal
+13,2026,January,Investment,Investments towards portfolio,30000,Index funds & PPF monthly SIP
+14,2026,February,Income,After Tax Salary - Self,95000,Regular monthly salary
+15,2026,February,Income,Rental income,18000,2BHK apartment rent
+16,2026,February,Income,After Tax Salary - Spouse,45000,Consulting assignment payout
+17,2026,February,Expense,Rent payments,25000,House rent
+18,2026,February,Expense,Grocery,11800,Monthly grocery shopping
+19,2026,February,Expense,Electricity bills,2400,Monthly electricity
+20,2026,February,Expense,Internet,1200,Broadband
+21,2026,February,Expense,Mobile,999,Postpaid plan
+22,2026,February,Expense,Petrol/Diesel,4800,Vehicle fuel
+23,2026,February,Expense,Maids wages,4500,Monthly domestic help
+24,2026,February,Expense,Hotel/Restaurants,5200,Anniversary dinner
+25,2026,February,Expense,TV/OTT,1499,Annual OTT bundle subscription
+26,2026,February,Investment,Investments towards portfolio,45000,Equity mutual funds SIP & ELSS
+27,2026,March,Income,After Tax Salary - Self,95000,Regular monthly salary
+28,2026,March,Income,Rental income,18000,2BHK apartment rent
+29,2026,March,Income,Business sale proceed,50000,Annual performance bonus
+30,2026,March,Expense,Rent payments,25000,House rent
+31,2026,March,Expense,Grocery,13200,Household groceries
+32,2026,March,Expense,School fees,35000,Annual term 1 school fees
+33,2026,March,Expense,School transport,6000,Quarterly school bus fee
+34,2026,March,Expense,Books/newspapers/periodicals,3500,School textbooks and stationery
+35,2026,March,Expense,Electricity bills,3100,Electricity
+36,2026,March,Expense,Petrol/Diesel,5200,Fuel
+37,2026,March,Expense,Life Insurance Premium,18000,Term insurance annual premium
+38,2026,March,Investment,Investments towards portfolio,40000,Direct equity & Sovereign Gold Bonds
+39,2026,April,Income,After Tax Salary - Self,98000,Annual increment revised salary
+40,2026,April,Income,Rental income,18000,2BHK apartment rent
+41,2026,April,Income,Interest/Dividend income,4200,Dividend from bluechip stocks
+42,2026,April,Expense,Rent payments,25000,House rent
+43,2026,April,Expense,Grocery,12000,Monthly grocery
+44,2026,April,Expense,Electricity bills,4200,Summer AC usage
+45,2026,April,Expense,Internet,1200,Broadband
+46,2026,April,Expense,Mobile,999,Postpaid plan
+47,2026,April,Expense,Petrol/Diesel,5000,Fuel
+48,2026,April,Expense,Clothes,8500,Summer clothing
+49,2026,April,Expense,Hotel/Restaurants,3800,Family dining out
+50,2026,April,Investment,Investments towards portfolio,35000,Systematic investment plan
+51,2026,May,Income,After Tax Salary - Self,98000,Monthly salary
+52,2026,May,Income,Rental income,18000,2BHK apartment rent
+53,2026,May,Expense,Rent payments,25000,House rent
+54,2026,May,Expense,Grocery,12400,Groceries
+55,2026,May,Expense,Electricity bills,5400,Peak summer AC bill
+56,2026,May,Expense,Travel expenses,58000,Annual family summer vacation to Himachal
+57,2026,May,Expense,Hotel/Restaurants,12000,Vacation food & stays
+58,2026,May,Expense,Petrol/Diesel,7500,Road trip fuel & tolls
+59,2026,May,Expense,Mobile,999,Postpaid plan
+60,2026,May,Expense,Miscellaneous,4500,Travel gears & accessories
+61,2026,May,Investment,Investments towards portfolio,10000,Reduced SIP due to vacation
+62,2026,June,Income,After Tax Salary - Self,98000,Monthly salary
+63,2026,June,Income,Rental income,18000,2BHK apartment rent
+64,2026,June,Income,Asset sale proceed,22000,Sale of old home appliances & gadget
+65,2026,June,Expense,Rent payments,25000,House rent
+66,2026,June,Expense,Grocery,11900,Groceries
+67,2026,June,Expense,Electricity bills,4800,Summer electricity
+68,2026,June,Expense,Vehicle maintenance,8500,Periodic car service & oil change
+69,2026,June,Expense,Vehicle Insurance Premium,12500,Comprehensive car insurance renewal
+70,2026,June,Expense,Internet,1200,Broadband
+71,2026,June,Expense,Mobile,999,Postpaid plan
+72,2026,June,Expense,Petrol/Diesel,5200,Fuel
+73,2026,June,Investment,Investments towards portfolio,32000,Monthly portfolio SIP
+74,2026,July,Income,After Tax Salary - Self,98000,Monthly salary
+75,2026,July,Income,Rental income,18000,2BHK apartment rent
+76,2026,July,Income,Interest/Dividend income,2800,Fixed deposit interest
+77,2026,July,Expense,Rent payments,25000,House rent
+78,2026,July,Expense,Grocery,12200,Monthly grocery
+79,2026,July,Expense,Electricity bills,3600,Monsoon electricity
+80,2026,July,Expense,Home Repair works,14500,Monsoon waterproofing & painting
+81,2026,July,Expense,Medicines,3200,Seasonal flu care
+82,2026,July,Expense,Petrol/Diesel,4900,Fuel
+83,2026,July,Expense,Internet,1200,Broadband
+84,2026,July,Expense,Mobile,999,Postpaid plan
+85,2026,July,Expense,Maids wages,4500,Domestic help
+86,2026,July,Investment,Investments towards portfolio,35000,Mutual funds SIP
+87,2026,August,Income,After Tax Salary - Self,98000,Monthly salary
+88,2026,August,Income,Rental income,18000,2BHK apartment rent
+89,2026,August,Expense,Rent payments,25000,House rent
+90,2026,August,Expense,Grocery,12800,Monthly grocery
+91,2026,August,Expense,Electricity bills,3200,Electricity
+92,2026,August,Expense,School fees,22000,Term 2 school fee installment
+93,2026,August,Expense,"Gifts - birthdays, marriages etc",7500,Raksha Bandhan gifts
+94,2026,August,Expense,Hotel/Restaurants,4800,Dining out
+95,2026,August,Expense,Petrol/Diesel,5100,Fuel
+96,2026,August,Expense,Internet,1200,Broadband
+97,2026,August,Expense,Mobile,999,Postpaid plan
+98,2026,August,Investment,Investments towards portfolio,28000,Monthly investments
+99,2026,September,Income,After Tax Salary - Self,98000,Monthly salary
+100,2026,September,Income,Rental income,18000,2BHK apartment rent
+101,2026,September,Income,Interest/Dividend income,5100,Semi-annual stock dividends
+102,2026,September,Expense,Rent payments,25000,House rent
+103,2026,September,Expense,Grocery,12100,Grocery
+104,2026,September,Expense,Electricity bills,2900,Electricity
+105,2026,September,Expense,Property tax bills,11000,Annual municipal property tax
+106,2026,September,Expense,Internet,1200,Broadband
+107,2026,September,Expense,Mobile,999,Postpaid plan
+108,2026,September,Expense,Petrol/Diesel,4800,Fuel
+109,2026,September,Expense,Donations,5000,Charity & community Ganesh festival
+110,2026,September,Investment,Investments towards portfolio,42000,Mutual funds & NPS contribution
+111,2026,October,Income,After Tax Salary - Self,98000,Monthly salary
+112,2026,October,Income,Rental income,18000,2BHK apartment rent
+113,2026,October,Income,Business sale proceed,40000,Diwali festival bonus
+114,2026,October,Expense,Rent payments,25000,House rent
+115,2026,October,Expense,Grocery,15500,Festive grocery & sweets
+116,2026,October,Expense,"Ornaments, jewels",35000,Dhanteras gold coin purchase
+117,2026,October,Expense,Clothes,22000,Diwali family shopping & ethnic wear
+118,2026,October,Expense,"Gifts - birthdays, marriages etc",12000,Diwali gifts for family & team
+119,2026,October,Expense,Electronics purchase,18000,Smart TV upgrade during festive sale
+120,2026,October,Expense,Electricity bills,2700,Electricity
+121,2026,October,Expense,Petrol/Diesel,5600,Fuel
+122,2026,October,Expense,Internet,1200,Broadband
+123,2026,October,Expense,Mobile,999,Postpaid plan
+124,2026,October,Investment,Investments towards portfolio,15000,Festive month investment
+125,2026,November,Income,After Tax Salary - Self,98000,Monthly salary
+126,2026,November,Income,Rental income,18000,2BHK apartment rent
+127,2026,November,Expense,Rent payments,25000,House rent
+128,2026,November,Expense,Grocery,12300,Monthly grocery
+129,2026,November,Expense,Electricity bills,2200,Pleasant weather electricity
+130,2026,November,Expense,Loan payments - Vehicle,11500,Car loan monthly EMI
+131,2026,November,Expense,"Movies, theaters, concerts",3200,Weekend movie outings
+132,2026,November,Expense,Petrol/Diesel,4900,Fuel
+133,2026,November,Expense,Internet,1200,Broadband
+134,2026,November,Expense,Mobile,999,Postpaid plan
+135,2026,November,Expense,Maids wages,4500,Domestic help
+136,2026,November,Investment,Investments towards portfolio,46000,Aggressive post-festival SIP
+137,2026,December,Income,After Tax Salary - Self,98000,Monthly salary
+138,2026,December,Income,Rental income,18000,2BHK apartment rent
+139,2026,December,Income,Interest/Dividend income,6200,Year-end interest payouts
+140,2026,December,Expense,Rent payments,25000,House rent
+141,2026,December,Expense,Grocery,13000,Monthly grocery
+142,2026,December,Expense,Electricity bills,2100,Winter electricity
+143,2026,December,Expense,Travel expenses,28000,Year-end family getaway
+144,2026,December,Expense,Hotel/Restaurants,8500,New Year celebrations & dining
+145,2026,December,Expense,Petrol/Diesel,5800,Fuel
+146,2026,December,Expense,Internet,1200,Broadband
+147,2026,December,Expense,Mobile,999,Postpaid plan
+148,2026,December,Expense,"Gifts - birthdays, marriages etc",6500,Christmas & New year gifts
+149,2026,December,Investment,Investments towards portfolio,25000,Year-end investment

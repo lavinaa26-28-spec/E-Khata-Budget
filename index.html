@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Khata — Personal Budget & Expense Manager</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js for visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <!-- Application CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-badge">₹</div>
+        <div class="brand-info">
+          <h1>E-Khata</h1>
+          <p>Personal Budget</p>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <button class="nav-link active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-link" data-view="entry">
+          <span class="nav-icon">✍️</span>
+          <span>Budget Entry</span>
+        </button>
+        <button class="nav-link" data-view="transactions">
+          <span class="nav-icon">📋</span>
+          <span>Transactions</span>
+          <span class="nav-badge" id="nav-tx-count">0</span>
+        </button>
+        <button class="nav-link" data-view="matrix">
+          <span class="nav-icon">📑</span>
+          <span>Budget Matrix</span>
+        </button>
+        <button class="nav-link" data-view="analytics">
+          <span class="nav-icon">📈</span>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-link" data-view="import-export">
+          <span class="nav-icon">🔄</span>
+          <span>CSV Import / Export</span>
+        </button>
+        <button class="nav-link" data-view="verification">
+          <span class="nav-icon">🧪</span>
+          <span>Test & Submission</span>
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="club-pill">
+          <span>🏛️ IIEBM FinVerse</span>
+        </div>
+        <div>FinVerse Finance Club Challenge</div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      
+      <!-- Topbar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="btn-icon mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation">☰</button>
+          <div class="page-title-group">
+            <h2 id="current-page-title">Dashboard</h2>
+            <p id="current-page-subtitle">Understand your money. Plan your future.</p>
+          </div>
+        </div>
+
+        <div class="topbar-controls">
+          <!-- Year Selector -->
+          <div class="filter-group">
+            <label for="global-year-select">Year</label>
+            <select id="global-year-select" class="select-filter">
+              <option value="2026" selected>2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
+            </select>
+          </div>
+
+          <!-- Month Selector -->
+          <div class="filter-group">
+            <label for="global-month-select">Month</label>
+            <select id="global-month-select" class="select-filter">
+              <option value="ALL">All Year (Annual)</option>
+              <option value="January" selected>January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
+          </div>
+
+          <!-- Quick Add Entry Button -->
+          <button class="btn btn-secondary btn-sm" id="btn-quick-add-entry">
+            <span>+ Single Entry</span>
+          </button>
+
+          <!-- Bulk Add Transactions Button -->
+          <button class="btn btn-primary" id="btn-topbar-bulk-add" title="Add or import multiple transactions at once">
+            <span>⚡ + Bulk Add Transactions</span>
+          </button>
+
+          <!-- Quick Reset / Blank Slate Button -->
+          <button class="btn btn-secondary btn-sm" id="btn-topbar-clear" title="Start with a clean blank slate for live presentation">
+            <span>✨ Clear / Blank</span>
+          </button>
+
+          <!-- Quick Demo Load Button -->
+          <button class="btn btn-outline btn-sm" id="btn-topbar-demo" title="Load sample dataset for demonstration">
+            <span>⚡ Load Demo</span>
+          </button>
+
+          <!-- Theme Toggle -->
+          <button class="btn-icon" id="theme-toggle-btn" title="Toggle Dark/Light Mode">🌙</button>
+        </div>
+      </header>
+
+      <!-- Content Views -->
+      <main class="content-body">
+        
+        <!-- Deficit Warning Banner (Shown dynamically when expenses > income) -->
+        <div id="deficit-alert-banner" class="alert-banner alert-danger" style="display: none;">
+          <div>
+            <strong>⚠️ Warning:</strong> Expenses exceed income for this month. (Deficit: <span id="deficit-amount">₹0</span>)
+          </div>
+          <span class="badge badge-danger">Review Outflows</span>
+        </div>
+
+        <!-- ===================================================================
+             PAGE 1: DASHBOARD
+             =================================================================== -->
+        <section id="view-dashboard" class="page-view active">
+          
+          <!-- KPI Cards Grid -->
+          <div class="kpi-grid">
+            <!-- 1. Total Income -->
+            <div class="kpi-card income-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Sub Total Income</span>
+                <div class="kpi-icon" style="background: var(--success-bg); color: #047857;">📥</div>
+              </div>
+              <div class="kpi-value" id="kpi-total-income">₹0</div>
+              <div class="kpi-footer">
+                <span id="kpi-income-subtext">Sum of all income streams</span>
+              </div>
+            </div>
+
+            <!-- 2. Total Expenses -->
+            <div class="kpi-card expense-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Sub Total Expenses</span>
+                <div class="kpi-icon" style="background: var(--danger-bg); color: #b91c1c;">📤</div>
+              </div>
+              <div class="kpi-value" id="kpi-total-expenses">₹0</div>
+              <div class="kpi-footer">
+                <span id="kpi-expense-subtext">Sum of all monthly spend</span>
+              </div>
+            </div>
+
+            <!-- 3. Expenses as % of Income -->
+            <div class="kpi-card rate-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Expenses as % of Income</span>
+                <div class="kpi-icon" style="background: var(--warning-bg); color: #b45309;">📊</div>
+              </div>
+              <div class="kpi-value" id="kpi-expense-ratio">0.0%</div>
+              <div class="kpi-footer">
+                <span id="kpi-ratio-badge" class="badge badge-neutral">Threshold: 100%</span>
+              </div>
+            </div>
+
+            <!-- 4. Investable Surplus (Savings) -->
+            <div class="kpi-card surplus-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Investable Surplus</span>
+                <div class="kpi-icon" style="background: var(--info-bg); color: #1d4ed8;">💰</div>
+              </div>
+              <div class="kpi-value" id="kpi-investable-surplus">₹0</div>
+              <div class="kpi-footer">
+                <span id="kpi-surplus-tag" class="badge badge-success">Income - Expenses</span>
+              </div>
+            </div>
+
+            <!-- 5. Savings Rate -->
+            <div class="kpi-card rate-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Savings Rate</span>
+                <div class="kpi-icon" style="background: var(--accent-light); color: #4338ca;">📈</div>
+              </div>
+              <div class="kpi-value" id="kpi-savings-rate">0.0%</div>
+              <div class="kpi-footer">
+                <span id="kpi-savings-badge" class="badge badge-neutral">Surplus / Income</span>
+              </div>
+            </div>
+
+            <!-- 6. Investments & Uninvested Savings -->
+            <div class="kpi-card invest-card">
+              <div class="kpi-header">
+                <span class="kpi-title">Investments & Cash</span>
+                <div class="kpi-icon" style="background: #fef3c7; color: #d97706;">💼</div>
+              </div>
+              <div class="kpi-value" id="kpi-investments-total" style="font-size: 1.3rem;">₹0</div>
+              <div class="kpi-footer">
+                <span>Uninvested: <strong id="kpi-uninvested-total">₹0</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Written Financial Insights Section -->
+          <div class="insights-card">
+            <div class="insights-card-header">
+              <span style="font-size: 1.3rem;">💡</span>
+              <div class="insights-title">Automated Financial Insights</div>
+              <span class="badge badge-success" style="margin-left: auto;">Real-time Analysis</span>
+            </div>
+            <div class="insights-list" id="dashboard-insights-container">
+              <!-- Dynamically populated insights -->
+            </div>
+          </div>
+
+          <!-- Dashboard Charts Grid -->
+          <div class="charts-grid">
+            
+            <!-- Chart 1: Income vs Expenses Trend (12 Months) -->
+            <div class="chart-card chart-col-8">
+              <div class="chart-header">
+                <div class="chart-title-box">
+                  <h3>Income vs Expenses Trend</h3>
+                  <p>Monthly inflows vs outflows with net surplus trajectory (Jan – Dec)</p>
+                </div>
+                <span class="badge badge-neutral">Combo Chart</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-income-vs-expenses"></canvas>
+              </div>
+              <div class="chart-insight-footer" id="insight-chart-trend">
+                <span>📌 Monthly variance tracking active across full annual cycle.</span>
+              </div>
+            </div>
+
+            <!-- Chart 2: Expense Category Breakdown -->
+            <div class="chart-card chart-col-4">
+              <div class="chart-header">
+                <div class="chart-title-box">
+                  <h3>Expense Category Breakdown</h3>
+                  <p>Distribution of expenditures for selected period</p>
+                </div>
+                <span class="badge badge-neutral">Donut Chart</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-expense-breakdown"></canvas>
+              </div>
+              <div class="chart-insight-footer" id="insight-chart-breakdown">
+                <span>📌 Category allocation reflects current selected filter.</span>
+              </div>
+            </div>
+
+            <!-- Chart 3: Savings Rate Over Time -->
+            <div class="chart-card chart-col-6">
+              <div class="chart-header">
+                <div class="chart-title-box">
+                  <h3>Savings Rate Over Time</h3>
+                  <p>Monthly investable surplus as % of income</p>
+                </div>
+                <span class="badge badge-neutral">Line Chart</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-savings-rate"></canvas>
+              </div>
+              <div class="chart-insight-footer" id="insight-chart-savings">
+                <span>📌 Healthy benchmark target: &ge; 20-30% savings rate.</span>
+              </div>
+            </div>
+
+            <!-- Chart 4: Top 5 Expense Categories -->
+            <div class="chart-card chart-col-6">
+              <div class="chart-header">
+                <div class="chart-title-box">
+                  <h3>Top 5 Expense Categories</h3>
+                  <p>Largest spending categories by total value</p>
+                </div>
+                <span class="badge badge-neutral">Horizontal Bar</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-top-expenses"></canvas>
+              </div>
+              <div class="chart-insight-footer" id="insight-chart-top-expenses">
+                <span>📌 Top spending drivers for focused budget optimization.</span>
+              </div>
+            </div>
+
+            <!-- Chart 5: Surplus Allocation (Investments vs Uninvested Savings) -->
+            <div class="chart-card chart-col-6">
+              <div class="chart-header">
+                <div class="chart-title-box">
+                  <h3>Investment vs Uninvested Savings</h3>
+                  <p>How your monthly surplus is deployed into portfolio vs cash</p>
+                </div>
+                <span class="badge badge-neutral">Stacked Bar</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-surplus-allocation"></canvas>
+              </div>
+            </div>
+
+            <!-- Chart 6: Expenses as % of Income vs 100% Threshold -->
+            <div class="chart-card chart-col-6">
+              <div class="chart-header">
+                <div class="chart-title-box">
+                  <h3>Expenses as % of Income (100% Threshold)</h3>
+                  <p>Months approaching or exceeding 100% total income expenditure</p>
+                </div>
+                <span class="badge badge-neutral">Threshold Chart</span>
+              </div>
+              <div class="chart-container">
+                <canvas id="chart-expense-threshold"></canvas>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             PAGE 2: BUDGET ENTRY & BULK IMPORT
+             =================================================================== -->
+        <section id="view-entry" class="page-view">
+          <div class="section-card">
+            
+            <!-- Entry Mode Switcher Tabs (Single vs Bulk) -->
+            <div class="entry-nav-tabs">
+              <button type="button" class="entry-nav-btn active" id="btn-tab-single-entry">
+                <span>✍️ Single Transaction</span>
+              </button>
+              <button type="button" class="entry-nav-btn" id="btn-tab-bulk-entry">
+                <span>⚡ Bulk Add Transactions</span>
+              </button>
+            </div>
+
+            <!-- 1. SINGLE TRANSACTION ENTRY FORM -->
+            <div id="single-entry-container">
+              <div class="section-header">
+                <div>
+                  <h3>Add Single Budget Record</h3>
+                  <p>Add monthly income, expense, or portfolio investment entry</p>
+                </div>
+                <button class="btn btn-outline btn-sm" id="btn-open-custom-category-modal">
+                  ➕ Add Custom Category
+                </button>
+              </div>
+
+              <form id="form-budget-entry">
+                <input type="hidden" id="entry-edit-id" value="">
+                <div class="form-grid">
+                  
+                  <!-- Year -->
+                  <div class="form-group">
+                    <label class="form-label" for="entry-year">Year *</label>
+                    <select id="entry-year" class="form-control" required>
+                      <option value="2026" selected>2026</option>
+                      <option value="2025">2025</option>
+                      <option value="2024">2024</option>
+                    </select>
+                  </div>
+
+                  <!-- Month -->
+                  <div class="form-group">
+                    <label class="form-label" for="entry-month">Month *</label>
+                    <select id="entry-month" class="form-control" required>
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October">October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                  </div>
+
+                  <!-- Type -->
+                  <div class="form-group">
+                    <label class="form-label" for="entry-type">Type *</label>
+                    <select id="entry-type" class="form-control" required>
+                      <option value="Income">Income (Inflow)</option>
+                      <option value="Expense" selected>Expense (Outflow)</option>
+                      <option value="Investment">Investment (Portfolio)</option>
+                    </select>
+                  </div>
+
+                  <!-- Category -->
+                  <div class="form-group">
+                    <label class="form-label" for="entry-category">Category *</label>
+                    <select id="entry-category" class="form-control" required>
+                      <!-- Populated dynamically based on Type -->
+                    </select>
+                    <span class="form-hint">Choose predefined or custom category</span>
+                  </div>
+
+                  <!-- Amount (₹) -->
+                  <div class="form-group">
+                    <label class="form-label" for="entry-amount">Amount (₹) *</label>
+                    <input type="number" id="entry-amount" class="form-control" placeholder="e.g. 25000" min="0.01" step="any" required>
+                    <span class="form-hint">Enter positive monetary value</span>
+                  </div>
+
+                  <!-- Notes / Description -->
+                  <div class="form-group full-width">
+                    <label class="form-label" for="entry-notes">Notes / Description (Optional)</label>
+                    <input type="text" id="entry-notes" class="form-control" placeholder="e.g. Monthly rent paid via UPI">
+                  </div>
+                </div>
+
+                <!-- Live Calculation Preview -->
+                <div class="form-preview-box" id="entry-live-preview">
+                  <div class="preview-stat">
+                    <span>Selected Month Income</span>
+                    <strong id="preview-month-income">₹0</strong>
+                  </div>
+                  <div class="preview-stat">
+                    <span>Selected Month Expenses</span>
+                    <strong id="preview-month-expenses">₹0</strong>
+                  </div>
+                  <div class="preview-stat">
+                    <span>Projected Surplus</span>
+                    <strong id="preview-month-surplus">₹0</strong>
+                  </div>
+                  <div class="preview-stat">
+                    <span>Projected Savings Rate</span>
+                    <strong id="preview-month-rate">0.0%</strong>
+                  </div>
+                </div>
+
+                <!-- Form Action Buttons -->
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary" id="btn-cancel-entry">Cancel / Clear</button>
+                  <button type="submit" class="btn btn-primary" id="btn-save-entry">Save Budget Entry</button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 2. BULK TRANSACTION ENTRY / IMPORT CONTAINER -->
+            <div id="bulk-entry-container" style="display: none;">
+              
+              <!-- Bulk Step 1: Input Options (Upload or Paste) -->
+              <div id="bulk-input-step">
+                <div class="section-header">
+                  <div>
+                    <h3>⚡ Bulk Add Transactions</h3>
+                    <p>Add 10, 50, 100 or 1,000+ transactions at once via CSV upload or direct text paste</p>
+                  </div>
+                  <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary btn-sm" id="btn-bulk-download-template">
+                      📄 Download CSV Template
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Source Sub-Tabs -->
+                <div class="bulk-source-tabs">
+                  <button type="button" class="bulk-source-tab-btn active" id="btn-source-paste">
+                    <span>📋 Paste Multiple Transactions</span>
+                  </button>
+                  <button type="button" class="bulk-source-tab-btn" id="btn-source-upload">
+                    <span>📁 Upload CSV / Excel File</span>
+                  </button>
+                </div>
+
+                <!-- Tab Panel 1: Paste Multiple Transactions -->
+                <div id="panel-bulk-paste">
+                  <div class="alert-banner alert-info" style="margin-bottom: 14px; font-size: 0.8rem;">
+                    <div>
+                      <strong>Column Schema:</strong> <code>Date, Description, Category, Type, Amount, Payment Method, Account, Notes</code>
+                      <br><span style="color: var(--text-secondary); font-size: 0.75rem;">Supports comma-separated (CSV), tab-separated (from Excel / Google Sheets), or FinVerse format.</span>
+                    </div>
+                    <div style="display: flex; gap: 6px;">
+                      <button type="button" class="btn btn-secondary btn-sm" id="btn-load-sample-paste" style="font-size: 0.75rem;">
+                        📝 Load 20 Sample Rows
+                      </button>
+                    </div>
+                  </div>
+
+                  <textarea id="bulk-paste-text" class="bulk-paste-textarea" placeholder="Paste multiple rows from Excel/CSV here...
+Example:
+2026-09-01, Salary, After Tax Salary - Self, Income, 60000, Bank Transfer, HDFC Bank, Monthly salary
+2026-09-02, Groceries, Grocery, Expense, 3500, UPI, HDFC Bank, Pantry items
+2026-09-03, Electricity, Electricity bills, Expense, 2200, NetBanking, SBI, September power bill
+2026-09-04, Mutual Fund SIP, Investments towards portfolio, Investment, 20000, Auto-Debit, Zerodha, Monthly Index SIP"></textarea>
+                </div>
+
+                <!-- Tab Panel 2: Upload CSV File -->
+                <div id="panel-bulk-upload" style="display: none;">
+                  <div id="bulk-drop-zone" style="border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 36px 20px; text-align: center; cursor: pointer; transition: var(--transition); background: var(--bg-card-alt); margin-bottom: 14px;">
+                    <div style="font-size: 2.5rem; margin-bottom: 8px;">📂</div>
+                    <strong style="font-size: 0.95rem; color: var(--text-primary); display: block;">Click to browse or drag & drop CSV file here</strong>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Supports CSV / text tables up to 1,000+ rows</span>
+                    <input type="file" id="bulk-file-input" accept=".csv,.txt,.tsv" style="display: none;">
+                  </div>
+                  <div id="bulk-file-info" style="display: none; padding: 10px 14px; background: var(--bg-card-alt); border-radius: var(--radius-sm); font-size: 0.82rem; margin-bottom: 14px; border: 1px solid var(--border-color);">
+                    📄 Selected file: <strong id="bulk-file-name"></strong> (<span id="bulk-file-size"></span>)
+                  </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+                  <button type="button" class="btn btn-secondary" id="btn-clear-bulk-text">Clear Input</button>
+                  <button type="button" class="btn btn-primary" id="btn-parse-bulk-data">🔍 Parse & Preview Transactions</button>
+                </div>
+              </div>
+
+              <!-- Bulk Step 2: Live Validation & Preview Table -->
+              <div id="bulk-preview-step" style="display: none;">
+                <div class="section-header">
+                  <div>
+                    <h3>Validation & Import Preview</h3>
+                    <p>Review parsed records, correct inline validation errors, and confirm import</p>
+                  </div>
+                </div>
+
+                <!-- Validation KPI Cards -->
+                <div class="validation-summary-grid">
+                  <div class="val-summary-card total-card">
+                    <span>Total Parsed</span>
+                    <strong id="val-count-total">0</strong>
+                  </div>
+                  <div class="val-summary-card valid-card">
+                    <span>Valid Rows</span>
+                    <strong id="val-count-valid" style="color: #047857;">0</strong>
+                  </div>
+                  <div class="val-summary-card error-card">
+                    <span>Errors Found</span>
+                    <strong id="val-count-errors" style="color: #b91c1c;">0</strong>
+                  </div>
+                  <div class="val-summary-card dup-card">
+                    <span>Duplicates</span>
+                    <strong id="val-count-duplicates" style="color: #b45309;">0</strong>
+                  </div>
+                </div>
+
+                <!-- Filter Pills and Options -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+                  <div class="filter-pills-bar" style="margin-bottom: 0;">
+                    <button type="button" class="filter-pill-btn active" data-filter="all" id="pill-filter-all">All (<span id="pill-all-cnt">0</span>)</button>
+                    <button type="button" class="filter-pill-btn" data-filter="valid" id="pill-filter-valid">Valid Only (<span id="pill-valid-cnt">0</span>)</button>
+                    <button type="button" class="filter-pill-btn" data-filter="error" id="pill-filter-error">Errors Only (<span id="pill-error-cnt">0</span>)</button>
+                    <button type="button" class="filter-pill-btn" data-filter="duplicate" id="pill-filter-dup">Duplicates (<span id="pill-dup-cnt">0</span>)</button>
+                  </div>
+
+                  <div style="display: flex; align-items: center; gap: 16px; font-size: 0.8rem; color: var(--text-secondary);">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="chk-auto-custom-cats" checked>
+                      <span>Auto-register new categories</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                      <input type="checkbox" id="chk-skip-duplicates" checked>
+                      <span>Skip duplicates</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Interactive Preview Table -->
+                <div class="preview-table-wrapper">
+                  <table class="preview-table" id="table-bulk-preview">
+                    <thead>
+                      <tr>
+                        <th style="width: 40px;">#</th>
+                        <th>Status</th>
+                        <th>Date / Month</th>
+                        <th>Type</th>
+                        <th>Category</th>
+                        <th style="text-align: right;">Amount (₹)</th>
+                        <th>Description / Notes</th>
+                        <th>Account / Pay Method</th>
+                        <th>Validation Notes</th>
+                        <th style="text-align: center;">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tbody-bulk-preview">
+                      <!-- Dynamically rendered preview rows with inline editable cells -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Preview Actions -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 14px; border-top: 1px solid var(--border-color);">
+                  <button type="button" class="btn btn-secondary" id="btn-back-to-input">⬅️ Edit Input Rows</button>
+                  <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-remove-invalid-rows">🗑️ Discard Invalid Rows</button>
+                    <button type="button" class="btn btn-primary" id="btn-confirm-import-bulk">
+                      📥 Import Valid Transactions
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             PAGE 3: TRANSACTIONS TABLE
+             =================================================================== -->
+        <section id="view-transactions" class="page-view">
+          <div class="section-card">
+            <div class="section-header">
+              <div>
+                <h3>All Transactions</h3>
+                <p>Search, filter, edit and manage budget entries</p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-primary btn-sm" id="btn-tx-bulk-add">⚡ + Bulk Add Transactions</button>
+                <button class="btn btn-secondary btn-sm" id="btn-export-filtered-csv">📥 Export Filtered CSV</button>
+              </div>
+            </div>
+
+            <!-- Filter Toolbar -->
+            <div style="display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 200px;">
+                <input type="text" id="tx-search-input" class="form-control" placeholder="🔍 Search description, category...">
+              </div>
+              <div style="min-width: 130px;">
+                <select id="tx-filter-type" class="form-control">
+                  <option value="ALL">All Types</option>
+                  <option value="Income">Income Only</option>
+                  <option value="Expense">Expense Only</option>
+                  <option value="Investment">Investment Only</option>
+                </select>
+              </div>
+              <div style="min-width: 140px;">
+                <select id="tx-filter-month" class="form-control">
+                  <option value="ALL">All Months</option>
+                  <option value="January">January</option>
+                  <option value="February">February</option>
+                  <option value="March">March</option>
+                  <option value="April">April</option>
+                  <option value="May">May</option>
+                  <option value="June">June</option>
+                  <option value="July">July</option>
+                  <option value="August">August</option>
+                  <option value="September">September</option>
+                  <option value="October">October</option>
+                  <option value="November">November</option>
+                  <option value="December">December</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="table-responsive">
+              <table class="data-table" id="transactions-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Year</th>
+                    <th>Month</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th style="text-align: right;">Amount (₹)</th>
+                    <th>Notes</th>
+                    <th style="text-align: center;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="transactions-table-body">
+                  <!-- Dynamically populated rows -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Empty state when no matching transactions -->
+            <div id="tx-empty-state" class="empty-state" style="display: none;">
+              <div class="empty-state-icon">📋</div>
+              <h4>No transactions found</h4>
+              <p>No budget entries match your current search or filters. Try adjusting filters or add a new record.</p>
+              <button class="btn btn-primary btn-sm" onclick="navigateTo('entry')">+ Add First Entry</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             PAGE 4: BUDGET MATRIX (Excel Sheet 2 Standalone Replica)
+             =================================================================== -->
+        <section id="view-matrix" class="page-view">
+          <div class="section-card">
+            <div class="section-header">
+              <div>
+                <h3>Annual Budget Matrix (Excel Template Structure)</h3>
+                <p>Exact replica of the FinVerse Excel Template (Sheet 2: Jan–Dec + Yearly Total with all Subtotals and Formulas)</p>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-secondary btn-sm" id="btn-export-matrix-csv">📊 Export Matrix View</button>
+                <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Print / PDF</button>
+              </div>
+            </div>
+
+            <div class="matrix-table-wrapper" id="matrix-table-container">
+              <!-- Dynamically populated 12-month spreadsheet matrix -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             PAGE 5: ANALYTICS
+             =================================================================== -->
+        <section id="view-analytics" class="page-view">
+          <div class="section-card">
+            <div class="section-header">
+              <div>
+                <h3>Deep Financial Analytics & Health Diagnostics</h3>
+                <p>Granular breakdown of cash flow velocity, savings efficiency, and category spend</p>
+              </div>
+            </div>
+
+            <div class="charts-grid">
+              <div class="chart-card chart-col-12">
+                <div class="chart-header">
+                  <div class="chart-title-box">
+                    <h3>Cumulative Surplus & Wealth Velocity (Jan – Dec)</h3>
+                    <p>Net accumulated savings curve over the fiscal year</p>
+                  </div>
+                </div>
+                <div class="chart-container" style="min-height: 320px;">
+                  <canvas id="chart-cumulative-surplus"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-card chart-col-12">
+                <div class="chart-header">
+                  <div class="chart-title-box">
+                    <h3>Category Spending Heatmap Table</h3>
+                    <p>Aggregated spending distribution across all active expense heads</p>
+                  </div>
+                </div>
+                <div class="table-responsive" id="analytics-category-table-wrapper">
+                  <!-- Category Analytics Table -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             PAGE 6: CSV IMPORT / EXPORT & DEMO DATA
+             =================================================================== -->
+        <section id="view-import-export" class="page-view">
+          <div class="section-card">
+            <div class="section-header">
+              <div>
+                <h3>CSV Data Management & Sample Datasets</h3>
+                <p>Import custom structured budget files or export your entire financial history</p>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+              
+              <!-- Import Card -->
+              <div style="border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; background: var(--bg-card);">
+                <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 8px;">📥 Import CSV File</h4>
+                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px;">
+                  Upload a CSV file conforming to the required FinVerse structure: <code>ID, Year, Month, Type, Category, Amount, Notes</code>
+                </p>
+
+                <div id="drop-zone" style="border: 2px dashed var(--border-color); border-radius: var(--radius-md); padding: 28px 16px; text-align: center; cursor: pointer; transition: var(--transition); background: var(--bg-card-alt);">
+                  <div style="font-size: 2rem; margin-bottom: 8px;">📁</div>
+                  <strong style="font-size: 0.9rem; color: var(--text-primary); display: block;">Click to browse or drag & drop CSV file</strong>
+                  <span style="font-size: 0.75rem; color: var(--text-muted);">Supports UTF-8 CSV up to 10MB</span>
+                  <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+                </div>
+
+                <div style="margin-top: 16px; display: flex; gap: 8px;">
+                  <button class="btn btn-secondary btn-sm" id="btn-download-csv-template">📄 Download CSV Template</button>
+                </div>
+              </div>
+
+              <!-- Export & Sample Data Card -->
+              <div style="border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; background: var(--bg-card); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 8px;">📤 Export & Realistic Sample Data</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px;">
+                    Instantly load the verified 12-month sample dataset or export current data to CSV.
+                  </p>
+
+                  <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="btn btn-primary" id="btn-load-sample-data" style="justify-content: flex-start; padding: 12px 16px;">
+                      <span>⚡ Load Realistic 12-Month Sample Data (149 Records)</span>
+                    </button>
+                    
+                    <button class="btn btn-secondary" id="btn-export-full-csv" style="justify-content: flex-start; padding: 12px 16px;">
+                      <span>💾 Export All Budget Records as CSV</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                  <button class="btn btn-danger btn-sm" id="btn-clear-all-data">🗑️ Reset / Clear All Stored Data</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================================================================
+             PAGE 7: TEST VERIFICATION & CHALLENGE SUBMISSION
+             =================================================================== -->
+        <section id="view-verification" class="page-view">
+          <div class="test-runner-card">
+            <div class="section-header">
+              <div>
+                <h3>Financial Calculation Test Suite</h3>
+                <p>Automated verification of FinVerse Student Guide & Challenge Test Cases</p>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-run-tests">▶️ Re-run Test Suite</button>
+            </div>
+
+            <!-- Test Cases Grid -->
+            <div class="test-grid">
+              
+              <!-- Test Case 1 -->
+              <div class="test-item passed" id="test-card-1">
+                <div class="test-title">
+                  <span>Test Case 1: Standard Budget</span>
+                  <span class="badge badge-success">PASSED</span>
+                </div>
+                <div class="test-spec">
+                  Input: Income = ₹100,000 | Expenses = ₹60,000<br>
+                  Expected: Surplus = ₹40,000 | Exp % = 60.0% | Savings Rate = 40.0%
+                </div>
+                <div class="test-result" id="test-res-1">
+                  ✓ Verified: Surplus = ₹40,000, Exp % = 60%, Savings Rate = 40%
+                </div>
+              </div>
+
+              <!-- Test Case 2 -->
+              <div class="test-item passed" id="test-card-2">
+                <div class="test-title">
+                  <span>Test Case 2: Deficit Month (Overspending)</span>
+                  <span class="badge badge-success">PASSED</span>
+                </div>
+                <div class="test-spec">
+                  Input: Income = ₹50,000 | Expenses = ₹55,000<br>
+                  Expected: Surplus = -₹5,000 | Warning Triggered
+                </div>
+                <div class="test-result" id="test-res-2">
+                  ✓ Verified: Surplus = -₹5,000, Deficit Warning active
+                </div>
+              </div>
+
+              <!-- Test Case 3 -->
+              <div class="test-item passed" id="test-card-3">
+                <div class="test-title">
+                  <span>Test Case 3: Zero Income (Division by Zero Safety)</span>
+                  <span class="badge badge-success">PASSED</span>
+                </div>
+                <div class="test-spec">
+                  Input: Income = ₹0 | Expenses = ₹10,000<br>
+                  Expected: Exp % = N/A | Savings Rate = N/A (No Crash)
+                </div>
+                <div class="test-result" id="test-res-3">
+                  ✓ Verified: Returns "N/A" safely without NaN/division error
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- FinVerse Challenge Submission Details -->
+          <div class="section-card">
+            <div class="section-header">
+              <div>
+                <h3>FinVerse Challenge Submission Reference</h3>
+                <p>Requirements specified in FinVerse Student Guide (Round 2)</p>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; font-size: 0.85rem;">
+              <div style="background: var(--bg-card-alt); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <h4 style="font-weight: 700; margin-bottom: 8px;">📋 Challenge Metadata</h4>
+                <ul style="padding-left: 20px; line-height: 1.8; color: var(--text-secondary);">
+                  <li><strong>Club:</strong> FinVerse Finance Club of IIEBM</li>
+                  <li><strong>Event:</strong> Personal Budget Laptop Application</li>
+                  <li><strong>Core Flow:</strong> Inflows → Subtotals → Ratios → Surplus → Portfolio</li>
+                  <li><strong>Currency:</strong> Indian Rupee (₹) with Indian Lakhs/Crores notation</li>
+                </ul>
+              </div>
+
+              <div style="background: var(--bg-card-alt); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                <h4 style="font-weight: 700; margin-bottom: 8px;">🤖 AI Partner & Prompts Details</h4>
+                <ul style="padding-left: 20px; line-height: 1.8; color: var(--text-secondary);">
+                  <li><strong>AI Tool Used:</strong> Google Antigravity / Gemini 3.7 Flash</li>
+                  <li><strong>Persistence:</strong> Client-Side LocalStorage with JSON parsing</li>
+                  <li><strong>Visualizations:</strong> Chart.js 4.4 Engine</li>
+                  <li><strong>Formulas:</strong> Exact Excel <code>Sheet 2</code> reproduction</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: CUSTOM CATEGORY CREATION
+       =================================================================== -->
+  <div class="modal-backdrop" id="modal-custom-category">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>➕ Add Custom Category</h3>
+        <button class="btn-icon" id="btn-close-category-modal" style="border: none; background: transparent;">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-custom-category">
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="custom-cat-type">Category Group *</label>
+            <select id="custom-cat-type" class="form-control" required>
+              <option value="Income">Income Head</option>
+              <option value="Expense" selected>Expense Head</option>
+              <option value="Investment">Investment Head</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="custom-cat-name">Category Name *</label>
+            <input type="text" id="custom-cat-name" class="form-control" placeholder="e.g. Freelance Design, Pet Care, Gym Membership" required>
+            <span class="form-hint">Enter a unique descriptive name</span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-custom-category">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-save-custom-category">Add Category</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
